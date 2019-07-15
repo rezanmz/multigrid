@@ -26,3 +26,4 @@ double* GuassSeidel(systemOfEquations sys, int iterations);
 systemOfEquations ReadDrSaniFormat();
 double* SolveWithAMG(systemOfEquations sys);
 CRS* convertToCRS(double** const A, int row, int column);
+CRS* multiplyMatrix(double** A, int nA, double** B, int nB);

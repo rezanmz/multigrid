@@ -14,7 +14,7 @@ CRS* convertToCRS(double** const A, int row, int column)
 	}
 	crs->val = new double[crs->nnz];
 	crs->col_index = new int[crs->nnz];
-	crs->row_ptr = new int[row];
+	crs->row_ptr = new int[row + 1];
 	int index = 0;
 	bool firstInRow = true;
 	for (int i = 0; i < row; i++)
@@ -30,8 +30,9 @@ CRS* convertToCRS(double** const A, int row, int column)
 				index++;
 				firstInRow = false;
 			}
-			firstInRow = true;
 		}
+		firstInRow = true;
 	}
+	crs->row_ptr[row] = crs->nnz + 1;
 	return crs;
 }

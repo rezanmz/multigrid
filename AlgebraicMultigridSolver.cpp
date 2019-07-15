@@ -22,7 +22,7 @@ int main()
 	for (int i = 0; i < crs->nnz; i++)
 		cout << crs->col_index[i] << "\t";
 	cout << endl << "row_ptr: ";
-	for (int i = 0; i < crs->rows; i++)
+	for (int i = 0; i < crs->rows + 1; i++)
 		cout << crs->row_ptr[i] << "\t";
 
 
