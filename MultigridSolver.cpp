@@ -70,7 +70,10 @@ Coarse FindCoarse(int n, double** const A, double* const r)
 	cout << "p transposed was calculated.\n";
 
 	// Calculating p_transposed*A
-	double** temp = new double* [coarseCount];
+
+	double** temp = multiplyMatrix(p_transposed, coarseCount, n, A, n);
+
+	/*double** temp = new double* [coarseCount];
 	for (int i = 0; i < coarseCount; i++) temp[i] = new double[n];
 
 	for (int i = 0; i < coarseCount; i++)
@@ -79,28 +82,43 @@ Coarse FindCoarse(int n, double** const A, double* const r)
 			temp[i][j] = 0;
 			for (int k = 0; k < n; k++)
 				temp[i][j] += p_transposed[i][k] * A[k][j];
-		}
+		}*/
+
+
+
+
 	cout << "p_transposed*A was calculated.\n";
 	// Calculating ACoarse = p_transposed*A*p
-	for (int i = 0; i < coarseCount; i++)
+
+	c.ACoarse = multiplyMatrix(temp, coarseCount, n, p, coarseCount);
+
+
+	/*for (int i = 0; i < coarseCount; i++)
 		for (int j = 0; j < coarseCount; j++)
 		{
 			c.ACoarse[i][j] = 0;
 			for (int k = 0; k < n; k++)
 				c.ACoarse[i][j] += temp[i][k] * p[k][j];
-		}
+		}*/
+
+
 	delete[] temp;
 	cout << "'A' was interpoolated to coarse grid.\n";
 
 
 	// Interpolating r to coarse grid
 		// Calculating rCoarse = p_transposed*r
+
+
+
 	for (int i = 0; i < coarseCount; i++)
 	{
 		c.rCoarse[i] = 0;
 		for (int j = 0; j < n; j++)
 			c.rCoarse[i] += p_transposed[i][j] * r[j];
 	}
+
+
 
 	c.noOfCoarseNodes = coarseCount;
 	c.prolongation = p;
