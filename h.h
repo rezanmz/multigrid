@@ -1,4 +1,10 @@
 #pragma once
+struct matrix2D
+{
+	double** A;
+	int i;
+	int j;
+};
 struct CRS
 {
 	double* val;
@@ -26,4 +32,5 @@ double* GuassSeidel(systemOfEquations sys, int iterations);
 systemOfEquations ReadDrSaniFormat();
 double* SolveWithAMG(systemOfEquations sys);
 CRS* convertToCRS(double** const A, int row, int column);
-double** multiplyMatrix(double** const A, int iA, int jA, double** B, int jB);
+double** multiplyMatrix(double** const A, int iA, int jA, double** const B, int jB);
+matrix2D Receive2Dmatrix();

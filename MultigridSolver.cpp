@@ -127,6 +127,43 @@ Coarse FindCoarse(int n, double** const A, double* const r)
 	return c;
 }
 
+Coarse FindCoarseCRS(CRS A, CRS r)
+{
+	int& n = A.rows;
+	enum status { coarse, fine, none };
+	status* s = new status[n];
+	unsigned int coarseCount = 0;
+	unsigned int fineCount = 0;
+	for (int i = 0; i < n; i++) s[i] = none;
+	for (int i = 0; i < n; i++)
+	{
+		if (s[i] == none)
+		{
+			s[i] = coarse;
+			coarseCount++;
+			for (int j = A.row_ptr[i] + 1; j < A.row_ptr[i + 1]; j++)
+			{
+				if (s[A.col_index[j]] == none)
+				{
+					s[A.col_index[j]] = fine;
+					fineCount++;
+				}
+			}
+		}
+	}
+
+
+
+	Coarse c;
+	c.ACoarse = new double* [2];
+	for (int i = 0; i < 2; i++) c.ACoarse[i] = new double[2];
+	c.noOfCoarseNodes = 5;
+	c.prolongation = new double* [2];
+	for (int i = 0; i < 2; i++) c.prolongation[i] = new double[2];
+	c.rCoarse = new double[5];
+	return c;
+}
+
 double* SolveWithAMG(systemOfEquations sys)
 {
 	double** A = sys.A;
@@ -146,6 +183,13 @@ double* SolveWithAMG(systemOfEquations sys)
 	}
 	cout << "Residual 'r' was calculated on fine grid.\n";
 	// Finding coarse grid
+
+
+	CRS* ACRS = convertToCRS(A, n, n);
+	Coarse test = FindCoarseCRS(*ACRS, *ACRS);
+
+
+
 	Coarse c = FindCoarse(n, A, r);
 
 	// Calculating 'e' on coarse grid Ae=r

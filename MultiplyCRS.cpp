@@ -1,7 +1,7 @@
 #include "h.h"
 #include <iostream>
 // Since jA and iB are the same, we only receive one parameter for both
-double** multiplyMatrix(double** const A, int iA, int jA, double** B, int jB)
+double** multiplyMatrix(double** const A, int iA, int jA, double** const B, int jB)
 {
 	// Converting A to CRS
 	CRS* crsA = convertToCRS(A, iA, jA);
