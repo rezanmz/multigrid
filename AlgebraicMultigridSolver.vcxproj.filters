@@ -30,9 +30,6 @@
     <ClCompile Include="CRS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MultiplyCRS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="h.h">

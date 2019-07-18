@@ -130,6 +130,7 @@ Coarse FindCoarse(int n, double** const A, double* const r)
 Coarse FindCoarseCRS(CRS A, CRS r)
 {
 	int& n = A.rows;
+	// Determining Coarse and Fine nodes
 	enum status { coarse, fine, none };
 	status* s = new status[n];
 	unsigned int coarseCount = 0;
@@ -151,6 +152,61 @@ Coarse FindCoarseCRS(CRS A, CRS r)
 			}
 		}
 	}
+	int* coarseSet = new int[coarseCount];
+	for (int i = 0; i < n; i++)
+	{
+		if (s[i] == coarse)
+		{
+			*coarseSet = i;
+			coarseSet++;
+		}
+	}
+	coarseSet -= coarseCount;
+	// Constructing Prolongation operator
+	double** p = new double* [n];
+	for (int i = 0; i < n; i++) p[i] = new double[coarseCount];
+	for (int i = 0; i < n; i++)
+	{
+		if (s[i] == coarse)
+		{
+			for (int j = 0; j < coarseCount; j++)
+			{
+				p[i][j] = 0;
+			}
+			p[i][i] = 1;
+			continue;
+		}
+		if (s[i] == fine)
+		{
+			double sigma = 0;
+			for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; j++)
+			{
+				for (int k = 0; k < coarseCount; k++)
+				{
+					if (coarseSet[k] == A.col_index[j])
+					{
+						sigma++;
+					}
+				}
+			}
+			for (int j = 0; j < coarseCount; j++)
+			{
+				p[i][j] = 0;
+				for (int k = A.row_ptr[i]; k < A.row_ptr[i + 1]; k++)
+				{
+					if (coarseSet[j] == A.col_index[k])
+					{
+						p[i][j] = 1 / sigma;
+					}
+				}
+			}
+		}
+	}
+	CRS* pCRS = convertToCRS(p, n, coarseCount);
+	delete[] p;
+	// Calculating p_transposed
+	CRS* pTransposeCRS = transposeCRS(pCRS);
+
 
 
 

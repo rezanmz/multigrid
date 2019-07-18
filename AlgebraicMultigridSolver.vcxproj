@@ -154,7 +154,6 @@
     <ClCompile Include="AlgebraicMultigridSolver.cpp" />
     <ClCompile Include="CRS.cpp" />
     <ClCompile Include="MultigridSolver.cpp" />
-    <ClCompile Include="MultiplyCRS.cpp" />
     <ClCompile Include="ReadMatrices.cpp" />
     <ClCompile Include="Smoother.cpp" />
   </ItemGroup>

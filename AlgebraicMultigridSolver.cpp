@@ -33,17 +33,14 @@ void multigridTest()
 
 int main()
 {
-	multigridTest();
-	/*matrix2D mat = Receive2Dmatrix();
-	matrix2D mat2 = Receive2Dmatrix();
-	double** result = multiplyMatrix(mat.A, mat.i, mat.j, mat2.A, mat2.j);
-	for (int i = 0; i < mat.i; i++)
-	{
-		for (int j = 0; j < mat2.j; j++)
-		{
-			cout << result[i][j] << "\t";
-		}
-		cout << endl;
-	}*/
+	//multigridTest();
+	double** A = new double* [6];
+	for (int i = 0; i < 6; i++) A[i] = new double[6];
+	A[0][0] = 10; A[0][1] = 0;	A[0][2] = 0; A[0][3] = 0;	A[0][4] = -2; A[0][5] = 0;
+	A[1][0] = 3; A[1][1] = 9;	A[1][2] = 0; A[1][3] = 0;	A[1][4] = 0; A[1][5] = 3;
+	A[2][0] = 0; A[2][1] = 7;	A[2][2] = 8; A[2][3] = 7;	A[2][4] = 0; A[2][5] = 0;
+	A[3][0] = 3; A[3][1] = 0;	A[3][2] = 8; A[3][3] = 7;	A[3][4] = 5; A[3][5] = 0;
+	A[4][0] = 0; A[4][1] = 8;	A[4][2] = 0; A[4][3] = 9;	A[4][4] = 9; A[4][5] = 13;
+	A[5][0] = 0; A[5][1] = 4;	A[5][2] = 0; A[5][3] = 0;	A[5][4] = 2; A[5][5] = -1;
 	return 0;
 }

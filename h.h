@@ -34,3 +34,4 @@ double* SolveWithAMG(systemOfEquations sys);
 CRS* convertToCRS(double** const A, int row, int column);
 double** multiplyMatrix(double** const A, int iA, int jA, double** const B, int jB);
 matrix2D Receive2Dmatrix();
+CRS* transposeCRS(CRS* const mat);
