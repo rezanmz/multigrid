@@ -41,6 +41,28 @@ CRS* convertToCRS(double** const A, int row, int column)
 	return crs;
 }
 
+double** convertFromCRS(CRS* mat, int col)
+{
+	double** A = new double* [mat->rows];
+	for (int i = 0; i < mat->rows; i++) A[i] = new double[col];
+	for (int i = 0; i < mat->rows; i++)
+		for (int j = 0; j < col; j++) A[i][j] = 0;
+	int currRow = 0;
+	for (int i = 0; i < mat->nnz; i++)
+	{
+		for (int j = 0; j < mat->rows; j++)
+		{
+			if (i >= mat->row_ptr[j] && i < mat->row_ptr[j + 1])
+			{
+				currRow = j;
+				break;
+			}
+		}
+		A[currRow][mat->col_index[i]] = mat->val[i];
+	}
+	return A;
+}
+
 // Since jA and iB are the same, we only receive one parameter for both
 double** multiplyMatrix(double** const A, int iA, int jA, double** const B, int jB)
 {
@@ -65,6 +87,38 @@ double** multiplyMatrix(double** const A, int iA, int jA, double** const B, int 
 	}
 	delete crsA;
 	return result;
+}
+
+CRS* multiplyMatrixCRS(CRS* const A, int iA, int jA, CRS* const B, int jB)
+{
+	double** result = new double* [iA];
+	for (int i = 0; i < iA; i++) result[i] = new double[jB];
+	for (int i = 0; i < iA; i++)
+		for (int j = 0; j < jB; j++)
+			result[i][j] = 0;
+	CRS* resultCRS = new CRS{};
+	// Converting B from CRS
+	double** matB = convertFromCRS(B, jB);
+
+	for (int column = 0; column < jB; column++)
+	{
+		for (int i = 0; i < iA; i++)
+		{
+			for (int k = A->row_ptr[i]; k < A->row_ptr[i + 1]; k++)
+			{
+				result[i][column] += A->val[k] * matB[A->col_index[k]][column];
+			}
+		}
+	}
+
+	for (int i = 0; i < jA; i++)
+		delete[] matB[i];
+	delete[] matB;
+	resultCRS = convertToCRS(result, iA, jB);
+	for (int i = 0; i < iA; i++)
+		delete[] result[i];
+	delete[] result;
+	return resultCRS;
 }
 
 CRS* transposeCRS(CRS* const mat)

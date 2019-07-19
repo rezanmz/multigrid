@@ -34,7 +34,7 @@ Coarse FindCoarse(int n, double** const A, double* const r)
 	for (int i = 0; i < n; i++) p[i] = new double[coarseCount];
 
 	for (int i = 0; i < n; i++)
-		for (int j = 0; j < coarseCount; j++)
+		for (unsigned int j = 0; j < coarseCount; j++)
 		{
 			if (i == j)
 			{
@@ -58,14 +58,14 @@ Coarse FindCoarse(int n, double** const A, double* const r)
 	// Interpolating A to coarse grid
 	Coarse c;
 	c.ACoarse = new double* [coarseCount];
-	for (int i = 0; i < coarseCount; i++) c.ACoarse[i] = new double[coarseCount];
+	for (unsigned int i = 0; i < coarseCount; i++) c.ACoarse[i] = new double[coarseCount];
 	c.rCoarse = new double[coarseCount];
 
 	// Finding p_transposed
 	double** p_transposed = new double* [coarseCount];
-	for (int i = 0; i < coarseCount; i++) p_transposed[i] = new double[n];
+	for (unsigned int i = 0; i < coarseCount; i++) p_transposed[i] = new double[n];
 	for (int i = 0; i < n; i++)
-		for (int j = 0; j < coarseCount; j++)
+		for (unsigned int j = 0; j < coarseCount; j++)
 			p_transposed[j][i] = p[i][j];
 	cout << "p transposed was calculated.\n";
 
@@ -111,7 +111,7 @@ Coarse FindCoarse(int n, double** const A, double* const r)
 
 
 
-	for (int i = 0; i < coarseCount; i++)
+	for (unsigned int i = 0; i < coarseCount; i++)
 	{
 		c.rCoarse[i] = 0;
 		for (int j = 0; j < n; j++)
@@ -169,11 +169,12 @@ Coarse FindCoarseCRS(CRS A, CRS r)
 	{
 		if (s[i] == coarse)
 		{
-			for (int j = 0; j < coarseCount; j++)
+			for (unsigned int j = 0; j < coarseCount; j++)
 			{
 				p[i][j] = 0;
 			}
-			p[i][i] = 1;
+			if (i < coarseCount)
+				p[i][i] = 1;
 			continue;
 		}
 		if (s[i] == fine)
@@ -181,7 +182,7 @@ Coarse FindCoarseCRS(CRS A, CRS r)
 			double sigma = 0;
 			for (int j = A.row_ptr[i]; j < A.row_ptr[i + 1]; j++)
 			{
-				for (int k = 0; k < coarseCount; k++)
+				for (unsigned int k = 0; k < coarseCount; k++)
 				{
 					if (coarseSet[k] == A.col_index[j])
 					{
@@ -189,7 +190,7 @@ Coarse FindCoarseCRS(CRS A, CRS r)
 					}
 				}
 			}
-			for (int j = 0; j < coarseCount; j++)
+			for (unsigned int j = 0; j < coarseCount; j++)
 			{
 				p[i][j] = 0;
 				for (int k = A.row_ptr[i]; k < A.row_ptr[i + 1]; k++)
@@ -203,11 +204,25 @@ Coarse FindCoarseCRS(CRS A, CRS r)
 		}
 	}
 	CRS* pCRS = convertToCRS(p, n, coarseCount);
+	for (int i = 0; i < n; i++)
+		delete[] p[i];
 	delete[] p;
 	// Calculating p_transposed
 	CRS* pTransposeCRS = transposeCRS(pCRS);
 
+	// Calculating p_transposed*A
+	CRS* mult = multiplyMatrixCRS(pTransposeCRS, pTransposeCRS->rows, n, &A, n);
 
+	// Calculating ACoarse = p_transposed*A*p
+	CRS* ACoarse = multiplyMatrixCRS(mult, mult->rows, n, pCRS, pTransposeCRS->rows);
+	delete[] mult->col_index;
+	delete[] mult->row_ptr;
+	delete[] mult->val;
+	delete mult;
+
+	// Interpolating r to coarse grid
+	// Calculating rCoarse = p_transposed*r
+	CRS* rCoarse = multiplyMatrixCRS(pTransposeCRS, pTransposeCRS->rows, n, &r, 1);
 
 
 	Coarse c;
@@ -261,7 +276,7 @@ double* SolveWithAMG(systemOfEquations sys)
 	for (int i = 0; i < n; i++)
 	{
 		e[i] = 0;
-		for (int j = 0; j < c.noOfCoarseNodes; j++)
+		for (unsigned int j = 0; j < c.noOfCoarseNodes; j++)
 			e[i] += c.prolongation[i][j] * eCoarse[j];
 	}
 	delete[] eCoarse;
@@ -272,7 +287,7 @@ double* SolveWithAMG(systemOfEquations sys)
 		x[i] += e[i];
 	delete[] e;
 
-	for (int i = 0; i < c.noOfCoarseNodes; i++)
+	for (unsigned int i = 0; i < c.noOfCoarseNodes; i++)
 		delete[] c.ACoarse[i];
 	delete[] c.ACoarse;
 	delete[] c.rCoarse;

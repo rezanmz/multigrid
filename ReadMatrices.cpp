@@ -13,6 +13,7 @@ systemOfEquations ReadDrSaniFormat()
 	cout << "Enter file address: ";
 	string fileAdd;
 	cin >> fileAdd;
+	fileAdd = "C:\\Users\\Reza\\Desktop\\axb_1.txt";
 	ifstream file;
 	file.open(fileAdd.c_str());
 	string word;
